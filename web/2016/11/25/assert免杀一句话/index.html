@@ -129,7 +129,7 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="x00-evalassert">0x00 eval和assert的区别</h3>
+        <span itemprop="articleBody"><h3 id="0x00-eval和assert的区别">0x00 eval和assert的区别</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>http://www.vuln.cn/8395
 http://www.php.net/manual/zh/function.eval.php
@@ -137,7 +137,7 @@ http://php.net/manual/zh/functions.variable-functions.php
 
 1)assert是函数,eval不是函数,是语言构造器
 2)eval($a)中$a只能是字符串,assert($a)中$a可以是php代码,也可以是php代码的字符串,assert($a)的$a如果是字符串形式不能有2个以上的
-分号,如果有2个以上的分号只执行到第一个,使用assert来执行多条php语句可借助eval来实现
+分号,如果有2个以上的分号只执行到第一个,使用assert来执行多条php语句可借助eval来实现.
 
 eg.assert(eval("echo 1;echo 2;"));
 [注意上面这句如果是assert(eval("echo 1;echo 2"));这样写是不会执行echo 1也不会执行echo 2的,因为eval使用的字符串
@@ -175,7 +175,7 @@ c)assert("print_r(1);print_r(2);")或assert("print_r(1);print_r(2)")都只能执
 </code></pre>
 </div>
 
-<h3 id="x01-waf">0x01 一个waf的绕过过程</h3>
+<h3 id="0x01-一个waf的绕过过程">0x01 一个waf的绕过过程</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>1.waf过滤大部分关键字,eg.base64_decode,``,system等
 
@@ -226,7 +226,7 @@ eval('$a=chr(98).chr(97).chr(115).chr(101).chr(54).chr(52).chr(95).chr(100).chr(
 </code></pre>
 </div>
 
-<h3 id="x02-">0x02 免杀无特征无关键字一句话</h3>
+<h3 id="0x02-免杀无特征无关键字一句话">0x02 免杀无特征无关键字一句话</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>1.用chr(%d)^chr(%d)代替上面的chr
 
@@ -288,13 +288,15 @@ c)利用方式不是很方便
 </code></pre>
 </div>
 
-<h3 id="x03-">0x03 相关链接</h3>
+<h3 id="0x03-相关链接">0x03 相关链接</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>1.mytag_js.php样本文件及分析
 样本文件:https://github.com/3xp10it/webshell/tree/master/mytag_js
 相关分析:http://www.nxadmin.com/penetration/1168.html
 </code></pre>
 </div>
+
+<p>首发于360播报,版权归360播报所有</p>
 </span>
 
         
