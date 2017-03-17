@@ -5,9 +5,159 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 15 Mar 2017 11:22:57 +0800</pubDate>
-    <lastBuildDate>Wed, 15 Mar 2017 11:22:57 +0800</lastBuildDate>
+    <pubDate>Fri, 17 Mar 2017 13:29:30 +0800</pubDate>
+    <lastBuildDate>Fri, 17 Mar 2017 13:29:30 +0800</lastBuildDate>
     <generator>Jekyll v3.4.2</generator>
+    
+      <item>
+        <title>python tips</title>
+        <description>&lt;h3 id=&quot;0x00-about&quot;&gt;0x00 About&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;About python tips on &quot;bugs&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;0x01-detail&quot;&gt;0x01 Detail&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.python2/3在os.path.exists(&quot;~/...&quot;)时,无法自动识别当前系统的~目录,eg.macOS下的~为/var/root,ubuntu下的~为
+/root,os.path.exists(&quot;~/1.txt&quot;)不认识~.
+
+后来发现这不是bug,os.path.expanduser(&quot;~&quot;)可以认识~,http://www.cnblogs.com/xupeizhi/archive/2013/02/20/2918243.html
+
+2.python以&quot;a+&quot;模式读文件读出的内容为空,要将文件指针移到开关再读,f=open(&quot;..&quot;,&quot;a+&quot;) &amp;amp;&amp;amp; f.seek(0) &amp;amp;&amp;amp; f.read()
+http://stackoverflow.com/questions/14639936/how-to-read-from-file-opened-in-a-mode
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Fri, 17 Mar 2017 00:00:00 +0800</pubDate>
+        <link>http://3xp10it.cc/python/2017/03/17/python-tips/</link>
+        <guid isPermaLink="true">http://localhost:4000/python/2017/03/17/python-tips/</guid>
+        
+        <category>tips</category>
+        
+        <category>python</category>
+        
+        
+        <category>python</category>
+        
+      </item>
+    
+      <item>
+        <title>https劫持理解</title>
+        <description>&lt;h3 id=&quot;0x00-link&quot;&gt;0x00 Link&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.https://www.zhihu.com/question/22795329
+2.http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;0x01-https与ssl&quot;&gt;0x01 https与ssl&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssl:secure socket layer安全套接层,https,ftps等都是建立在ssl基础上
+https协议:建立在ssl协议之上的http协议[http over ssl](http协议建立在tcp协议之上)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;0x02-ssltls协议握手过程&quot;&gt;0x02 ssl/tls协议握手过程&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1)公钥私钥证书
+
+一般来讲:
+证书文件后缀:.crt,.pem
+私钥文件后缀:.key
+(这篇文章里说的&quot;嘗試對 SSL Private Key 下手&quot;应该是错的,那应试是SSL Public Key,
+http://devco.re/blog/2016/04/21/how-I-hacked-facebook-and-found-someones-backdoor-script/)
+证书请求文件:.csr
+公钥加密的数据只有私钥能解开,同样,私钥加密的数据用公钥可以解开
+
+公钥存放在证书文件中,证书相当于锁开着的箱子,私钥相当于箱子的锁的钥匙,ssl通信中的一方A利用证书中的公钥和某种协商
+好的加密算法将要发送到另一方B的数据加密,这个动作相当于把东西放进箱子并将锁关闭,B收到被锁的箱子后用私钥打开锁就看
+到明文了,实现了加密通信.
+
+更详细情况可见:
+http://www.fzb.me/2015-1-15-openssl-rsa.html
+https://www.zhihu.com/question/29620953
+
+2)ssl/tls协议握手过程
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/3xp10it/pic/master/dot/ssl/sslfinal.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;0x03-几种https会话劫持工具&quot;&gt;0x03 几种https会话劫持工具&lt;/h3&gt;
+
+&lt;h4 id=&quot;0xa-sslstrip&quot;&gt;0xa sslstrip&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;详情:https://software.intel.com/zh-cn/blogs/2011/10/11/ssl
+
+用户输入www.baidu.com,通过arp欺骗使得browser不会访问到真正的http://www.baidu.com,而http://www.baidu.com的内容是
+跳转到https://www.baidu.com,也即通过arp欺骗将browser的会话由https劫持成http,并由中间人与www.baidu.com服务器正常
+https通信
+
+缺点:使用有局限,要求用户输入url的时候没有输入https[一般用户不输入http或https,而是直接输入www.baidu.com]
+优点:受害用户在访问www.baidu.com的时候browser不会提示证书不可信
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;0xb-sslsplit&quot;&gt;0xb sslsplit&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sslsplit与cain几乎相同,只是sslsplit的证书是攻击者通过如下命令手动创建的
+openssl genrsa -out ca.key 4096
+openssl req -new -x509 -days 1826 -key ca.key -out ca.crt
+
+而cain的证书是中间人向真实服务器主动获取并修改的
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;0xc-cain&quot;&gt;0xc cain&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;中间人与browser和www.baidu.com服务器都进行正常ssl握手,中间人通过arp欺骗将自己伪装成www.baidu.com服务器,劫持受害
+机器的browser的https://www.baidu.com/login.php的请求,中间人向www.baidu.com服务器请求证书,获取证书后将证书中的公
+钥修改成中间人自己设置的公钥(中间人一般无法得到www.baidu.com服务器的私钥,私钥保存在www.baidu.com服务器上),并将
+修改后的证书发给browser,browser看到证书可疑,提示用户证书可疑,用户不懂,选择将目标https://www.baidu.com添加到可信
+任列表,之后browser正常请求https://www.baidu.com/login.php,与中间人进行ssl握手,此时的browser发给中间人的加密的数
+据是用中间人修改过的公钥加密的,中间人有这个公钥的私钥[因为这个这个公钥私钥对是中间人伪造生成的],于是中间人用私
+钥解密browser发过来的数据,再与www.baidu.com服务器走正常的ssl流程,也即将这解密后的数据重新加密发给www.baidu.com
+服务器.而中间人在得到www.baidu.com返回的数据后将它解密后再加密发给browser,browser再正常地用与中间人ssl握手要用
+的密钥来解密这个加密后的数据.
+
+也即整个过程中,www.baidu.com服务器并不知道有中间人的存在,一直把中间人当作正常的browser,而中间人能和
+www.baidu.com服务器进行正常的ssl握手(https通信)是因为中间人从browser那里得到解密后的数据,知道自己要访问什么内容
+,于是正常走https协议访问.而browser与中间人的通信也一直是正常的ssl握手,只是对browser来讲,对方&quot;服务器&quot;(中间人)的
+证书有问题,因为对方的公钥好像被修改过,无法被受害机器的browser验证为可信证书.
+
+缺点:欺骗过程中browser会提示受害用户证书不可信
+优点:一般用户会选择将要访问的网站加入到可信任列表,使得https劫持成功
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;0x04-私钥文件的用途&quot;&gt;0x04 私钥文件的用途&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;私钥的用途1:
+如果中间人通过web等手段进入了www.baidu.com服务器,取出www.baidu.com的私钥,然后再进行https劫持,这样brower在访问
+www.baidu.com的时候就不会发现证书有问题了,这样中间人也不用伪造证书,直接用www.baidu.com的证书,将证书发给
+browser,再与browser进行正常ssl握手即可,所有加密的数据都可以由中间人解密,因为中间人有www.baidu.com的公钥和私钥.
+其中,公钥在证书中,公钥用来加密发出的数据,私钥在中间人机器上,私钥用来解密browser发过来的数据.
+
+私钥的用途2:结合wireshark利用得到的私钥解密ssl/tls流量
+https://support.citrix.com/article/CTX135121
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Thu, 16 Mar 2017 00:00:00 +0800</pubDate>
+        <link>http://3xp10it.cc/web/2017/03/16/https%E5%8A%AB%E6%8C%81%E7%90%86%E8%A7%A3/</link>
+        <guid isPermaLink="true">http://localhost:4000/web/2017/03/16/https%E5%8A%AB%E6%8C%81%E7%90%86%E8%A7%A3/</guid>
+        
+        <category>https</category>
+        
+        <category>ssl</category>
+        
+        <category>mitm</category>
+        
+        
+        <category>web</category>
+        
+      </item>
     
       <item>
         <title>安装macOS sierra要做的事</title>
@@ -1202,210 +1352,6 @@ chunk chunk的指针ptr                                                        c
         <guid isPermaLink="true">http://localhost:4000/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/01/09/Double-Free%E6%BC%8F%E6%B4%9E/</guid>
         
         <category>漏洞战争</category>
-        
-        
-        <category>二进制</category>
-        
-      </item>
-    
-      <item>
-        <title>漏洞战争-cve-2013-2551</title>
-        <description>&lt;h3 id=&quot;0x00-about&quot;&gt;0x00 About&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;漏洞源:vgx.dll在处理&amp;lt;v:stroke&amp;gt;标签的dashstyle.array.length属性时,没有对传入的参数进行完备验证而导致整数溢出
-调试环境:
-    win7
-good knowledge:
-    http://www.isclab.org.cn/archives/2014/11/2830.html
-    http://www.voidcn.com/blog/tony_whu/article/p-4307461.html
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;0x01-分析&quot;&gt;0x01 分析&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;poc中关键处为:
-    vml1.dashstyle=&quot;1 2 3 4 ... 44&quot;
-    vml1.dashstyle.array.length=0-1
-    shape.dashstyle.array.length=0-1
-也即在设置dashstyle.array.length时,由原来的44变成了-1,这样导致了整数溢出漏洞,产生了数组越界访问的读写能力,而
-COARuntimeStyle对象偏移0x58处为可控字符串指针,可以将可控字符串设置成AAAAAA,书中poc中为:a[i].marginLeft=&quot;a&quot;
-这样就可以通过动态调试中找到内存中AAAAAA与模块基址的偏移量,从而由AAAAAA的内存地址减去该偏移量得到aslr下的模块的
-基址,由此基址可通过heap spray构造rop gadgets绕过dep+aslr,然后再次利用数组越界访问的读写能力改写对象的虚表指针就
-可以控制eip了
-
-通过poc分析这个整数溢出漏洞的溢出细节可这样实现:
-1)找到poc中关键的代码:vml1.dashstyle.array.length=0-1
-2)通过ida中的&quot;Functions Windows&quot;中按&quot;alt+t&quot;组合键找到1)中对应的dll中的对应类的函数:
-    vgx.dll中的COALineDashStyleArray类中的put_length函数
-3)windbg中bu vgx!COALineDashStyleArray::put_length
-4)单步调试分析汇编指令(细心活):
-    分析得到导致整数溢出的关键点在
-        mov esi,dword ptr [ebp+0Ch] ss:0023:040fa190=ffffffff  //获取到dashstyle数组长度值0xFFFFFFFF
-        cmp eax,esi //与poc中原来设置的dashstyle数组长度0x2C做比较,大于等于则跳转
-        jge vgx!COALineDashStyleArray::put_length+0xca处 //口诀:AB无符号,GL有符号,此处为g(有符号比较),导致漏洞
-        的产生
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Tue, 27 Dec 2016 00:00:00 +0800</pubDate>
-        <link>http://3xp10it.cc/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/12/27/%E6%BC%8F%E6%B4%9E%E6%88%98%E4%BA%89-cve-2013-2551/</link>
-        <guid isPermaLink="true">http://localhost:4000/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/12/27/%E6%BC%8F%E6%B4%9E%E6%88%98%E4%BA%89-cve-2013-2551/</guid>
-        
-        <category>漏洞分析</category>
-        
-        <category>整数溢出</category>
-        
-        
-        <category>二进制</category>
-        
-      </item>
-    
-      <item>
-        <title>漏洞战争-cve-2013-0750</title>
-        <description>&lt;h3 id=&quot;0x00-prepare&quot;&gt;0x00 Prepare&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.firefox17.0下载链接
-ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/17.0/win32/zh-CN/Firefox%20Setup%2017.0.exe
-2.firefox 17.0源码下载链接
-http://releases.mozilla.org/pub/mozilla.org/firefox/releases/17.0/source/firefox-17.0.source.tar.bz2
-3.firefox官方符号表服务器地址(在windbg中添加File|Symbol File Path)
-SRV*c:\symbollocal\*http://symbols.mozilla.org/firefox
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;0x01-分析&quot;&gt;0x01 分析&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;windbg|File|Symbol File Path|在最后添加;SRV*d:\symbollocal\*http://symbols.mozilla.org/firefox
-windbg|File|添加资源文件路径C:\Users\klionsec7\Desktop\mozilla-release
-打开firefox17.0
-f6附加firefox.exe
-g
-firefox打开poc.html
-    (ae4.131c): Access violation - code c0000005 (first chance)
-    First chance exceptions are reported before any exception handling.
-    This exception may be expected and handled.
-    eax=14405418 ebx=002dbbd8 ecx=002e1000 edx=14600000 esi=002dbb80 edi=072b0031
-    eip=693c2aa3 esp=002dba68 ebp=002dbaa0 iopl=0         nv up ei ng nz na pe cy
-    cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010287
-    *** WARNING: Unable to verify checksum for C:\Program Files (x86)\Mozilla Firefox\mozjs.dll
-    *** ERROR: Symbol file could not be found.  Defaulted to export symbols for C:\Program Files (x86)\Mozilla 
-    Firefox\mozjs.dll - 
-    mozjs!js::NewProxyObject+0x1043:
-    693c2aa3 668939          mov     word ptr [ecx],di        ds:002b:002e1000=????     
-    这里得到的中断下来的信息与书中不一致,这里得到的符号表对应的结果为mozjs!js::NewProxyObject+0x1043,书中得到的
-    结果为mozjs!ReplaceRegExpCallback+0x183,对应的汇编指令都是:mov word ptr [ecx],di
-    上面显示没有找到符号文件,查看当前符号路径,使用如下命令
-
-.sympath
-    0:000&amp;gt; .sympath
-    Symbol search path is: srv*c:symbols*http://msdl.microsoft.com/download/symbols   
-    结果中没有开始设置的firefox的符号表服务器地址,不知什么原因,调试器默认采用延迟模式加载符号,重新打开windbg,使
-    用如下命令添加firefox的符号表路径
-
-f6附加firefox.exe
-.sympath+ SRV*c:\symbollocal\*http://symbols.mozilla.org/firefox
-.sympath    
-    Symbol search path is: srv*c:symbols*http://msdl.microsoft.com/download/symbols;
-    SRV*c:\symbollocal\*http://symbols.mozilla.org/firefox
-.reload
-    这里如果不.reload依然会找不到符号表,可参考如下链接
-    http://www.cnblogs.com/kissdodog/p/3729396.html
-g
-firefox打开poc.html
-    (984.a00): Access violation - code c0000005 (first chance)
-    First chance exceptions are reported before any exception handling.
-    This exception may be expected and handled.
-    eax=0d4040d8 ebx=0045bf18 ecx=00460000 edx=0d600000 esi=0045bec0 edi=02200031
-    eip=6d752aa3 esp=0045bda8 ebp=0045bde0 iopl=0         nv up ei ng nz na pe cy
-    cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010287
-    *** WARNING: Unable to verify checksum for C:\Program Files (x86)\Mozilla Firefox\mozjs.dll
-    mozjs!ReplaceRegExpCallback+0x183:
-    6d752aa3 668939          mov     word ptr [ecx],di        ds:002b:00460000=0000
-kv
-    ChildEBP RetAddr  Args to Child              
-    0045bde0 6d799af8 05115710 0804d200 00000000 mozjs!ReplaceRegExpCallback+0x183 (FPO: [Non-Fpo]) 
-    [e:\builds\moz2_slave\rel-m-rel-w32-bld\build\js\src\jsstr.cpp @ 2099]
-    0045be10 6d79a333 00000001 0845f8e0 6d752920 mozjs!DoMatch+0xc8 (FPO: [Non-Fpo]) 
-    [e:\builds\moz2_slave\rel-m-rel-w32-bld\build\js\src\jsstr.cpp @ 1694]
-    0045be4c 6d7451e1 0045bec0 05410078 00000002 mozjs!str_replace_regexp+0x83 (FPO: [Non-Fpo]) 
-    [e:\builds\moz2_slave\rel-m-rel-w32-bld\build\js\src\jsstr.cpp @ 2278]
-    *** WARNING: Unable to verify checksum for C:\Program Files (x86)\Mozilla Firefox\firefox.exe
-    0045bf6c 00310031 00310031 00310031 00310031 mozjs!js::str_replace+0x261 (FPO: [Non-Fpo]) 
-    [e:\builds\moz2_slave\rel-m-rel-w32-bld\build\js\src\jsstr.cpp @ 2464]
-    0045bf7c 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf80 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf84 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf88 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf8c 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf90 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf94 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf98 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bf9c 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfa0 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfa4 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfa8 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfac 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfb0 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfb4 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    0045bfb8 00310031 00310031 00310031 00310031 firefox!__dyn_tls_init_callback &amp;lt;PERF&amp;gt; (firefox+0xb0031)
-    kv命令的结果中可以看到源码文件是jsstr.cpp,这里的kv的结果中的jsstr.cpp的路径并不是实际系统中的路径,可能是
-    windbg的bug,在本地磁盘中全局搜索jsstr.cpp文件,找到后用windbg打开[文件|打开源文件|]这时可以看到windbg中新出
-    现了一个源代码的面板,如果不手动打开,windbg不能自己找到,源代码面板中定位到如下位置:
-        
-    static bool
-    ReplaceRegExpCallback(JSContext *cx, RegExpStatics *res, size_t count, void *p)
-    {
-        ReplaceData &amp;amp;rdata = *static_cast&amp;lt;ReplaceData *&amp;gt;(p);
-
-        rdata.calledBack = true;
-        size_t leftoff = rdata.leftIndex;
-        size_t leftlen = res-&amp;gt;matchStart() - leftoff;
-        rdata.leftIndex = res-&amp;gt;matchLimit();
-
-        size_t replen = 0;  /* silence 'unused' warning */
-        if (!FindReplaceLength(cx, res, rdata, &amp;amp;replen))
-            return false;
-
-        size_t growth = leftlen + replen;
-        if (!rdata.sb.reserve(rdata.sb.length() + growth))
-            return false;
-
-        JSLinearString &amp;amp;str = rdata.str-&amp;gt;asLinear();  /* flattened for regexp */
-        const jschar *left = str.chars() + leftoff;
-
-        rdata.sb.infallibleAppend(left, leftlen); /* skipped-over portion of the search value */
-        DoReplace(cx, res, rdata);定位到的位置
-        return true;
-    }
-    windbg的源代码面板定位到上面的DoReplace语句处,但是由于缺乏相应版本的符号表,在源码调试中无法直接定位到异常指
-    令对应的是DoReplace的哪一句代码.从windbg上设置的符号表服务器地址上对应的符号表一般都是最新的firefox版本的符
-    号表,这里调试的firefox的版本是17.0,并不是当前最新版本,所以找不到DoReplace中具体代码位置,为了解决这个问题需
-    要自动编译firefox17.0的源码.
-    编译需要用到:http://ftp.mozilla.org/pub/mozilla/libraries/win32/中的mozillabuildsetup1.7,eg.将
-    mozillabuildsetup1.7安装到C:\mozilla-build\,然后将firefox源码中的xulrunner\config目录复制到
-    c:\mozilla-build下,在c:\mozilla-build\config\mozconfig文件中设置如下:
-
-    ac_add_options --enable-application=browser
-    ac_add_options --enable-debug
-    ac_add_options --enable-tests
-    ac_add_options -trace-malloc
-    ac_add_options --disable-webgl
-    打开mozzillabuildsetup安装目录下的start-msvc10.bat来启动vs2010后,进入mozilla源码目录,执行make -f client.mk
-    build.
-    系统需要安装vs2010,这里不再继续,分析至此.
-
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Mon, 26 Dec 2016 00:00:00 +0800</pubDate>
-        <link>http://3xp10it.cc/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/12/26/%E6%BC%8F%E6%B4%9E%E6%88%98%E4%BA%89-cve-2013-0750/</link>
-        <guid isPermaLink="true">http://localhost:4000/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/12/26/%E6%BC%8F%E6%B4%9E%E6%88%98%E4%BA%89-cve-2013-0750/</guid>
-        
-        <category>漏洞分析</category>
-        
-        <category>源码调试</category>
         
         
         <category>二进制</category>
