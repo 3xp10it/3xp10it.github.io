@@ -5,8 +5,8 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 19 Mar 2017 00:28:52 +0800</pubDate>
-    <lastBuildDate>Sun, 19 Mar 2017 00:28:52 +0800</lastBuildDate>
+    <pubDate>Mon, 20 Mar 2017 12:01:53 +0800</pubDate>
+    <lastBuildDate>Mon, 20 Mar 2017 12:01:53 +0800</lastBuildDate>
     <generator>Jekyll v3.4.2</generator>
     
       <item>
@@ -201,11 +201,6 @@ Karabiner-Elements,否则Karabiner-Elements会影响系统按键导致系统键�
 chsh -s /bin/zsh
 https://github.com/robbyrussell/oh-my-zsh安装oh-my-zsh
 https://github.com/3xp10it/.zshrc安装我的配置
-将~/.zshrc中的setxkbmap一行删除,macos sierria中没有setxkbmap,也没找到安装方法
-将~/.zshrc中的/usr/bin/zsh换成`which zsh`
-将~/.zshrc中的ifconfig找出ip的命令换成:
-echo &quot;ifconfig&quot; | `which zsh` | grep -oe 'inet.*netmask.*broadcast' | awk '{print $2}',因为macos下的grep -oP要写成
-grep -oe,P-&amp;gt;e表示正则pattern
 
 2)安装tmux
 https://github.com/tmux/tmux/releases下载最新release版本后安装,安装方法一般为:
