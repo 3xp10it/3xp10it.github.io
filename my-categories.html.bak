@@ -236,7 +236,7 @@
     
 	<a href="/auxilary/2016/05/24/rime%E4%BA%94%E7%AC%94%E8%AF%8D%E5%BA%93%E5%90%88%E5%B9%B6/" style="background-color: rgb(25, 25, 25);">2016-05-24 rime五笔词库合并</a><br>
      
-    二进制 ---------->16<br>
+    二进制 ---------->17<br>
     
 	<a href="/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/01/12/UAF%E6%BC%8F%E6%B4%9E/" style="background-color: rgb(25, 25, 25);">2017-01-12 UAF漏洞</a><br>
     
@@ -264,6 +264,8 @@
     
 	<a href="/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/07/28/%E6%BC%8F%E6%B4%9E%E6%88%98%E4%BA%89-cve-2010-2883/" style="background-color: rgb(25, 25, 25);">2016-07-28 漏洞战争-cve-2010-2883</a><br>
     
+	<a href="/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/07/28/quick-start-sulley/" style="background-color: rgb(25, 25, 25);">2016-07-28 quick start sulley</a><br>
+    
 	<a href="/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/06/26/%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%B2%E6%BC%8F%E6%B4%9E/" style="background-color: rgb(25, 25, 25);">2016-06-26 格式化串漏洞</a><br>
     
 	<a href="/%E4%BA%8C%E8%BF%9B%E5%88%B6/2016/06/13/pcman-ftp%E5%88%9D%E6%88%98%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" style="background-color: rgb(25, 25, 25);">2016-06-13 pcman-ftp初战漏洞挖掘</a><br>
@@ -289,10 +291,6 @@
     tmux ---------->1<br>
     
 	<a href="/tmux/2016/07/27/tmux%E8%87%AA%E5%8A%A8%E5%B8%83%E5%B1%80/" style="background-color: rgb(25, 25, 25);">2016-07-27 tmux自动布局</a><br>
-     
-    漏洞挖掘 ---------->1<br>
-    
-	<a href="/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/2016/07/28/quick-start-sulley/" style="background-color: rgb(25, 25, 25);">2016-07-28 quick start sulley</a><br>
      
     regexp ---------->1<br>
     
