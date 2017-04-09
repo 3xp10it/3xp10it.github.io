@@ -5,8 +5,8 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 08 Apr 2017 18:37:33 +0800</pubDate>
-    <lastBuildDate>Sat, 08 Apr 2017 18:37:33 +0800</lastBuildDate>
+    <pubDate>Mon, 10 Apr 2017 00:28:25 +0800</pubDate>
+    <lastBuildDate>Mon, 10 Apr 2017 00:28:25 +0800</lastBuildDate>
     <generator>Jekyll v3.4.2</generator>
     
       <item>
@@ -207,7 +207,7 @@ https://www.zhihu.com/question/35928898
 
 5.mac apple store下载star vpn
 
-6.安装清歌五笔输入法
+6.安装百度五笔输入法
 
 7.下载keyboard maestro,设置打开terminal.app快捷键为command+r,要注意的是安装了keyboard maestro之后不要安装 
 Karabiner-Elements,否则Karabiner-Elements会影响系统按键导致系统键盘修饰设置无效与keyboard maestro设置失效.
@@ -388,6 +388,13 @@ Serial: APZP-103-97-215-111
 
     macosbak.sh可见:
     https://raw.githubusercontent.com/3xp10it/mytools/master/macosbak.sh
+
+19.设置iterm2为终端,在iterm2的偏好设置中设置添加按键映射:
+    command+&amp;lt;-为:send esc + [1;5D   实现左移一个单词功能
+    command+-&amp;gt;为:send esc + [1;5C   实现右移一个单词功能
+    可参考:
+    http://apple.stackexchange.com/questions/154292/iterm-going-one-word-backwards-and-forwards
+
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>
