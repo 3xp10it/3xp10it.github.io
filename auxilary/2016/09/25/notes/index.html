@@ -1197,8 +1197,12 @@ https://www.goenitz.xyz/post/ubuntu-install-fcitx-rime-and-wubi
     vi /etc/ssh/sshd_config (attention!,here is not /etc/ssh/ssh_config)
     /PermitRootLogin<span class="nt">&lt;Enter&gt;</span>
     change to:
-        PermitRootLogin yes
-<span class="p">112.</span>gcc编译so文件:
+        PermitRootLogin yes<span class="sb">
+
+    macOS快速开启ssh服务:
+    systemsetup -getremotelogin
+    systemsetup -setremotelogin on
+</span><span class="p">112.</span>gcc编译so文件:
         gcc -shared -fPIC myfile.c -o myfile.socc
 <span class="p">113.</span>wordpress 渗透工具
 <span class="p">    1.</span>wpscan
@@ -2386,7 +2390,29 @@ windows:
 <span class="p">    192.</span>168.0.120开了ssh服务就能成功开始ssh对话,如果帐号口令正确就会成功登录到192.168.0.120的ssh服务.如果尝试
     ssh 192.168.0.1这样是无法开始ssh对话的,因为dmz是对wlan口而言的,ssh 192.168.0.1将访问路由器的ssh服务端口,如
     果路由器的lan口(192.168.0.1)没有开ssh服务则不能连接成功.路由器的wlan口和lan口是两块网卡对应的两个不同ip,每个
-    ip对应的开放的端口没有对应关系,是各自独立的.
+    ip对应的开放的端口没有对应关系,是各自独立的.<span class="sb">
+
+    也即:dmz是一个网卡所在ip的所有端口数据到另外一个网卡所在ip的内网的另一台机器(ip)的流量转发
+
+    一般有固定电话的地方可以分到一个公网ip,如果人所在的路由器附近没有固定电话,那么人则不可以通过在该路由器上设
+    置公网ip的dmz为该路由器下的某台机器的ip,因为人在这个路由器上设置的dmz是对路由器的wlan口的ip设置的,但是这个
+    wlan口并没有公网ip,因为没有固定电话(拨号得ip),有可能在人所在的小区的网络设备中有一个固定的电话,而人与其他邻
+    居共用这个小区的那台固定电话拨号得到的公网ip,要想让人所在的路由器下的自己的电脑可以用公网ip访问到,需要到小
+    区网络设备(小区路由器)中设置dmz为人的家里的路由器的ip,然后再在人的家里的路由器上设置dmz为人的电脑的ip,这样
+    才可以由公网ip访问到人的家里的在家里路由器下的内网下的电脑的ip.或者设置端口转发也可
+
+</span><span class="p">330.</span>burpsuite为android app的https流量代理:
+        http://www.jb51.net/article/64396.htm
+    burpsuite为ios app的https流量代理:
+        http://www.tuicool.com/articles/emIfea
+        http://danqingdani.blog.163.com/blog/static/1860941952012112353515306/
+<span class="p">
+331.</span>HOOK原理:
+    http://blog.csdn.net/on_1y/article/details/7595184
+<span class="p">
+332.</span>心脏滴血漏洞检测:
+    https://github.com/vs4vijay/exploits
+            nmap --script=ssl-heartbleed -p 443
 </code></pre>
 </div>
 </span>
