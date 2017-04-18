@@ -5,8 +5,8 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 18 Apr 2017 22:12:19 +0800</pubDate>
-    <lastBuildDate>Tue, 18 Apr 2017 22:12:19 +0800</lastBuildDate>
+    <pubDate>Tue, 18 Apr 2017 22:34:31 +0800</pubDate>
+    <lastBuildDate>Tue, 18 Apr 2017 22:34:31 +0800</lastBuildDate>
     <generator>Jekyll v3.4.2</generator>
     
       <item>
@@ -30,10 +30,10 @@ https://www.owasp.org/index.php/PHP_Object_Injection
 
 class foo{
     public $data=&quot;text&quot;;
-        function __destruct()
-        {
-            eval($this-&amp;gt;data);
-        }
+    function __destruct()
+    {
+        eval($this-&amp;gt;data);
+    }
 
 }
 

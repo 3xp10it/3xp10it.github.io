@@ -148,10 +148,10 @@ https://www.owasp.org/index.php/PHP_Object_Injection
 
 class foo{
     public $data="text";
-        function __destruct()
-        {
-            eval($this-&gt;data);
-        }
+    function __destruct()
+    {
+        eval($this-&gt;data);
+    }
 
 }
 
