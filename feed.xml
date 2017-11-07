@@ -5,9 +5,250 @@
     <description>A blog about programming and network security</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 07 Nov 2017 21:18:18 +0800</pubDate>
-    <lastBuildDate>Tue, 07 Nov 2017 21:18:18 +0800</lastBuildDate>
+    <pubDate>Tue, 07 Nov 2017 22:05:56 +0800</pubDate>
+    <lastBuildDate>Tue, 07 Nov 2017 22:05:56 +0800</lastBuildDate>
     <generator>Jekyll v3.5.2</generator>
+    
+      <item>
+        <title>正则实用备忘录</title>
+        <description>&lt;p&gt;1.查找一个目录下的具备可匹配出正则内容的文件名.
+    eg.查找当前目录下能匹配”allow.*certificate”内容的文件的文件名,-i表示忽略大小写,-r表示递归搜索,-l表示只列出文件名&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ack -irl &quot;allow.*certificate&quot; .
+
+配合for循环:(用于查找ios头文件中用来进行https强校验的函数evaluateServerTrust)
+
+for each in $(ack -irl &quot;allow.*certificate&quot; .); do logify.pl $each &amp;gt;&amp;gt;  ~/xupload/Tweak.xm; done
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2.to be continue&lt;/p&gt;
+</description>
+        <pubDate>Tue, 07 Nov 2017 00:00:00 +0800</pubDate>
+        <link>http://3xp10it.cc/auxilary/2017/11/07/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%94%A8%E5%A4%87%E5%BF%98%E5%BD%95/</link>
+        <guid isPermaLink="true">http://localhost:4000/auxilary/2017/11/07/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%94%A8%E5%A4%87%E5%BF%98%E5%BD%95/</guid>
+        
+        <category>regexp</category>
+        
+        
+        <category>auxilary</category>
+        
+      </item>
+    
+      <item>
+        <title>ios tweak制作</title>
+        <description>&lt;h3 id=&quot;0x00-工具准备&quot;&gt;0x00 工具准备&lt;/h3&gt;
+
+&lt;p&gt;1.tweak制作工具(框架):&lt;a href=&quot;https://github.com/theos/theos&quot;&gt;theos&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;2.ios app脱appstore加的壳工具:&lt;a href=&quot;https://github.com/theos/theos&quot;&gt;clutch&lt;/a&gt;,如果失败则用&lt;a href=&quot;https://github.com/stefanesser/dumpdecrypted&quot;&gt;dumpdecrypted&lt;/a&gt;尝试&lt;/p&gt;
+
+&lt;p&gt;3.ios app头文件提取工具:&lt;a href=&quot;https://github.com/nygard/class-dump&quot;&gt;class-dump&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;4.class-dump的swift+object c不报错版本:&lt;a href=&quot;https://github.com/BlueCocoa/class-dump&quot;&gt;项目地址&lt;/a&gt;,&lt;a href=&quot;https://github.com/3xp10it/mytools/blob/master/class-dump&quot;&gt;可执行文件&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;5.查看运行时函数调用及调用参数值工具:logify.pl,logify是theos的一个内置工具,路径为/opt/theos/bin/logify.pl&lt;/p&gt;
+
+&lt;p&gt;6.远程调试ios工具:debugserver+lldb+[ida pro]&lt;/p&gt;
+
+&lt;p&gt;7.查看ios app中的ui对应的类的工具(安装在手机上):&lt;a href=&quot;https://github.com/dtrukr/FLEX_injected&quot;&gt;flex_injected&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;0x01-tweak制作实例&quot;&gt;0x01 tweak制作实例&lt;/h3&gt;
+
+&lt;h4 id=&quot;实现一个app上传步数大于5000&quot;&gt;实现一个app上传步数大于5000&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh root@iphone.ip
+wget https://github.com/KJCracks/Clutch/releases/download/2.0.4/Clutch-2.0.4 -O /usr/bin/Cluth
+Cluth -i
+Cluth -d index_number_of_target_app
+scp output.ipa user@pc_ip:
+exit
+unzip output.ipa -d ~/output
+class-dump -H ~/output/Payload/xxx.app/xxx -o ~/output_header
+分析出可疑类中的函数为PARSPedometerInfo.h中的函数[结合flex_injected,ida pro,frida,logify.pl得出]
+nic.pl
+选择新建一个iphone tweak,项目目录为~/xupload
+设置MobileSubstrate Bundle filter的值为output.ipa的bundleid的值,可从output.ipa的info.plist中得到
+logify.pl ~/output_header/PARSPedometerInfo.h &amp;gt; ~/xupload/Tweak.xm[这一步是为了hook可疑函数,查看调用及参数]
+cd xupload
+make
+make package
+scp package/xxxx.deb root@iphone.ip:
+ssh root@iphone.ip
+dpkg -i xxxx.deb
+手机连接mac,打开xcode,在windows|device and simulators|点击查看log按钮(小三角形状)
+运行目标app并点击上传步数
+查看xcode中函数的调用日志如下
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:20[m [0;30;46mDEBUG:[m  = PARSPedometerInfo&amp;lt;0x1708d8f70&amp;gt;: 
+	 integration=0 
+	 iPhone=0 
+	 watch=0 
+	 heartRat=0
+	 at:2017-11-05 16:00:00 +0000
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:21[m [0;30;46mDEBUG:[m  = PARSPedometerInfo&amp;lt;0x1708d8f70&amp;gt;: 
+	 integration=0 
+	 iPhone=0 
+	 watch=0 
+	 heartRat=0
+	 at:2017-11-05 16:00:00 +0000
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:12[m [0;30;46mDEBUG:[m -[&amp;lt;PARSPedometerInfo: 0x1708d8f70&amp;gt; setIntegratedSteps:36]
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:8[m [0;30;46mDEBUG:[m -[&amp;lt;PARSPedometerInfo: 0x1708d8f70&amp;gt; setStartDate:2017-11-04 16:00:00 +0000]
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:21[m [0;30;46mDEBUG:[m -[&amp;lt;PARSPedometerInfo: 0x174ad8100&amp;gt; init]
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:20[m [0;30;46mDEBUG:[m -[&amp;lt;PARSPedometerInfo: 0x174ad8100&amp;gt; description]
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:20[m [0;30;46mDEBUG:[m  = PARSPedometerInfo&amp;lt;0x174ad8100&amp;gt;: 
+	 integration=0 
+	 iPhone=0 
+	 watch=0 
+	 heartRat=0
+	 at:2017-11-05 16:00:00 +0000
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:21[m [0;30;46mDEBUG:[m  = PARSPedometerInfo&amp;lt;0x174ad8100&amp;gt;: 
+	 integration=0 
+	 iPhone=0 
+	 watch=0 
+	 heartRat=0
+	 at:2017-11-05 16:00:00 +0000
+Nov  6 12:05:32 iPhone PALifeApp[4494] &amp;lt;Notice&amp;gt;: [1;36m[xupload] [m[0;36mTweak.xm:12[m [0;30;46mDEBUG:[m -[&amp;lt;PARSPedometerInfo: 0x174ad8100&amp;gt; setIntegratedSteps:2305]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;从上面日志中发现关键函数及参数setIntegratedSteps:2305,于是要hook这个函数并设置参数为大于5000的值.
+回到Tweak.xm中查看这个函数&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (void)setIntegratedSteps:(long long )integratedSteps { %log; %orig; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;从中看出setIntergratedSteps函数传入了一个参数,参数类型是long long,这也是一种int类型,大小范围是int类型的4倍,直接修改
+成&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;%hook PARSPedometerInfo
+- (void)setIntegratedSteps:(long long )integratedSteps { %log; %orig(15347);  }
+%end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;make clean
+make 
+make package
+scp packages/xxx.deb root@iphone.ip:
+ssh root@iphone.ip
+dpkg -P com.yourcompany.xupload
+dpkg -i xxx.deb
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;重新运行目标app并点击上传步数,成功上传,后来分析上面setIntegratedSteps函数调用的参数为integratedSteps函数,也即
+integratedSteps参数的返回值作为setIntegratedSteps函数的参数,也即同样可通过hook integratedSteps函数来实现,分析认为
+integratedSteps函数是获取本地的步数值,而setIntegratedSteps函数是上传本地步数.hook integratedSteps函数可如下修改&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;将
+- (long long )integratedSteps { %log; long long  r = %orig; HBLogDebug(@&quot; = %lld&quot;, r); return r; }
+修改为:
+- (long long )integratedSteps { %log; long long  r =15347; return r; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;0x02-注意事项&quot;&gt;0x02 注意事项&lt;/h3&gt;
+
+&lt;p&gt;1.在运行nic.pl新建tweak项目时在输入bundleid时默认值为com.apple.springboard,这里要修改,且要修改成要hook的app的
+bundleid,查看bundleid可在app的安装包的Info.plist文件中得到&lt;/p&gt;
+
+&lt;p&gt;2.hook原理理解&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://blog.l4ys.tw/2017/06/tmctf-2017-rev400/
+https://www.oschina.net/question/565065_68287
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;3.如果使用ida pro动态调试ios app,需要设置使用远程gdb server(使用ios debugsever失败),在mac上用ida加载脱壳后的
+mach-o文件[在iphone上运行的是未脱壳的app,运行脱壳后的重新安装的app应该也可以,未尝试],需要在ida中重新设置加载基址,
+在ida菜单的edit|segment|rebase program处设置,如果不设置加载基址会导致无法下断点,因为断点是在真实的内存偏移处中断,
+而不设置加载基址看到的ida中的偏移只是相对偏移,相对偏移不是真实的内存地址,真实的内存地址=加载基址+相对偏移.目前暂
+未找到好用的查看app运行的加载基址的方法,网上有篇文章使用的是vmmap查看,实际编译没成功.&lt;/p&gt;
+
+&lt;p&gt;4.动态调试最好用lldb调试,ida调试很慢,在lldb中调试下断点时,断点地址可根据image list -o -f得到的加载基址加上ida pro
+中查看到的相对偏移得到&lt;/p&gt;
+
+&lt;h3 id=&quot;0x03-refer&quot;&gt;0x03 Refer&lt;/h3&gt;
+
+&lt;p&gt;1.ida远程调试ios程序&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;a.debugserver
+    http://blog.csdn.net/u013538542/article/details/72853521
+    http://bbs.iosre.com/t/debugserver-lldb-gdb/65
+b.ios安装gcc,ldid,make
+    http://kimi.it/517.html
+c.调试
+    1)http://blog.csdn.net/proteas/article/details/78083512
+    2)https://www.hex-rays.com/products/ida/support/tutorials/ios_debugger_tutorial.pdf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2.ios越狱应用开发&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://www.jianshu.com/p/bc63492e4847
+http://www.swiftyper.com/2016/01/25/ios-tweak-install-guide/
+
+lldb与gdb命令对照:
+    http://lldb.llvm.org/lldb-gdb.html
+
+ios脱appstre的壳:Clutch与dumpdecrypted的使用 
+    http://sunhongyi.com/2017/01/05/iOSReverse-decrytion-tools/
+    clutch用法:
+        http://www.jianshu.com/p/47836c78eb0a
+
+make出错时尝试这样:
+    http://bbs.iosre.com/t/theos/2049
+
+实例开发:
+    https://github.com/jackrex/FakeWeChatLoc
+    http://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;amp;amp;mid=2653577384&amp;amp;amp;idx=1&amp;amp;amp;sn=b44a9c9651bf09c5bea7e0337031c53c&amp;amp;amp;scene=0#wechat_redirect
+    logify.pl方法加日志
+    http://www.qingpingshan.com/m/view.php?aid=156771
+
+免越狱tweak开发
+    https://juejin.im/entry/58931dd5128fe10065441717
+
+动态调试(在ida中要设置基址)
+    http://www.cnblogs.com/ludashi/p/5730338.html
+
+hook原理
+    hook理解:
+        http://blog.l4ys.tw/2017/06/tmctf-2017-rev400/
+        https://www.oschina.net/question/565065_68287
+
+    hook种类
+        https://bbs.kafan.cn/thread-471551-1-1.html
+        http://www.epubit.com.cn/book/onlinechapter/33620
+    inline hook原理
+        http://www.cnblogs.com/zhangdongsheng/archive/2013/04/08/3007154.html
+    百科
+        http://www.baike.com/wiki/API+HOOK
+    got hook
+        http://ele7enxxh.com/Android-Arm-Inline-Hook.html
+
+    http://gslab.qq.com/article-164-1.html
+    http://www.jianshu.com/p/4f6d20076922
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 06 Nov 2017 00:00:00 +0800</pubDate>
+        <link>http://3xp10it.cc/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/11/06/ios-tweak%E5%88%B6%E4%BD%9C/</link>
+        <guid isPermaLink="true">http://localhost:4000/%E4%BA%8C%E8%BF%9B%E5%88%B6/2017/11/06/ios-tweak%E5%88%B6%E4%BD%9C/</guid>
+        
+        <category>ios</category>
+        
+        <category>tweak</category>
+        
+        <category>lldb</category>
+        
+        
+        <category>二进制</category>
+        
+      </item>
     
       <item>
         <title>深入理解计算机系统第12章笔记</title>
@@ -540,159 +781,6 @@ b)私有地址空间:它提供给每个程序一个假象,好像它是在独占�
         
         
         <category>web</category>
-        
-      </item>
-    
-      <item>
-        <title>dvwa的csrf_token机制</title>
-        <description>&lt;p&gt;dvwa的csrf_token在设置level为impossible(除low外未验证)时起作用,有了csrf_token后可防csrf漏洞的利用,同时也给自动化漏洞
-检测带来了麻烦,客户端扫描漏洞时需要每次重新设置新的csrf_token来发送get/post请求,如果没有带上新的token参数值服务器
-会校验不通过&lt;/p&gt;
-
-&lt;p&gt;dvwa设置level为impossible后服务端验证(由form action中的地址对应的页面进行验证)客户端传来的csrf_token的过程如下:(以xss[reflected]和login页面为例,dvwa中的login.php和xss_r中的form action中的url都是当前页面)&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
-    加载impossible.php
-    impossible.php执行内容流程:
-        1.验证csrf_token
-        2.刷新服务器端存储的csrf_token
-
-    取出新的csrf_token到html的body
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;其中刷新服务器存储的csrf_token的代码如下:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function generateSessionToken() {  # Generate a brand new (CSRF) token                                                                                    
-     if( isset( $_SESSION[ 'session_token'  ]  )  ) {                                                                                                         
-         destroySessionToken();                                                                                                                            
-     }                                                                                                                                                     
-     $_SESSION[ 'session_token'  ] = md5( uniqid()  );                                                                                                       
-} 
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;在上面的验证csrf_token中,xss[reflected]是先判断是否传入name参数,也即如果
-在url中出现name参数,无论是否为空都将进行csrf_token验证(服务器中用的isset($_POST[‘name’])来判断)
-eg.&lt;br /&gt;
-访问&lt;code class=&quot;highlighter-rouge&quot;&gt;http://192.168.83.11/dvwa/vulnerabilities/xss_r/?name=1&lt;/code&gt;时验证csrf_token&lt;br /&gt;
-访问&lt;code class=&quot;highlighter-rouge&quot;&gt;http://192.168.83.11/dvwa/vulnerabilities/xss_r/?name=&lt;/code&gt;时验证csrf_token&lt;br /&gt;
-访问&lt;code class=&quot;highlighter-rouge&quot;&gt;http://192.168.83.11/dvwa/vulnerabilities/xss_r/&lt;/code&gt;时不验证csrf_token&lt;/p&gt;
-
-&lt;p&gt;从上面服务器校验客户端传入的csrf_token参数的过程可以看出:&lt;/p&gt;
-
-&lt;p&gt;a.服务器判断客户端是同一个&lt;code class=&quot;highlighter-rouge&quot;&gt;人&lt;/code&gt;的方法是通过cookie中的sessionid来判断的,判断客户端是同一个&lt;code class=&quot;highlighter-rouge&quot;&gt;人&lt;/code&gt;正常合法地通过浏览器
-访问的通过cookie中的sessionid+传入的csrf_token=服务器保存的csrf_token来判断的&lt;/p&gt;
-
-&lt;p&gt;b.这种带csrf_token验证的情况会对暴力破解产生阻碍,导致暴力破解相当于只能单线程进行(需要每次等待返回的新的
-csrf_token),且暴力破解时需要每次在请求时更新请求参数中的csrf_token的值为从服务器返回的新的csrf_token值&lt;/p&gt;
-
-&lt;p&gt;c.在自动化漏洞检测时需要先判断要检测的页面是否有csrf_token(有些页面是没有的),如果有则要在请求前更新csrf_token参数
-的值(sql注入和xss检测中可能会有)&lt;/p&gt;
-
-&lt;p&gt;d.这里的csrf_token的验证和&lt;a href=&quot;http://3xp10it.cc/web/2016/11/10/%E8%87%AA%E5%8A%A8%E8%AF%86%E5%88%AB%E9%AA%8C%E8%AF%81%E7%A0%81%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/#0x02-about&quot;&gt;这里&lt;/a&gt;说的验证码验证机制几乎相同,只不过链接里的form action页面与登录页面不同,也即只
-要登录页面中的form action值不是登录页面则很可能存在验证码绕过的问题(只要人工输入一次验证码即可)&lt;/p&gt;
-
-</description>
-        <pubDate>Thu, 14 Sep 2017 00:00:00 +0800</pubDate>
-        <link>http://3xp10it.cc/web/2017/09/14/dvwa%E7%9A%84csrf_token%E6%9C%BA%E5%88%B6/</link>
-        <guid isPermaLink="true">http://localhost:4000/web/2017/09/14/dvwa%E7%9A%84csrf_token%E6%9C%BA%E5%88%B6/</guid>
-        
-        <category>csrf</category>
-        
-        <category>token</category>
-        
-        
-        <category>web</category>
-        
-      </item>
-    
-      <item>
-        <title>深入理解计算机系统第7章笔记</title>
-        <description>&lt;h3 id=&quot;链接&quot;&gt;链接&lt;/h3&gt;
-
-&lt;p&gt;1.为了构造可执行文件,链接器必须完成两个主要任务&lt;/p&gt;
-
-&lt;p&gt;a)符号解析:符号解析的目的是将每个符号引用刚好和一个符号定义联系起来&lt;/p&gt;
-
-&lt;p&gt;b)重定位:链接器通过把每个符号定义与一个存储器位置联系起来,然后修改所有对这些符号的引用,使得它们指向这个存储器位置
-,从而重定位这些节&lt;/p&gt;
-
-&lt;p&gt;2.如下为一个典型的ELF可重定位目标文件格式(与elf[可执行目标文件]的格式类似)
-&lt;img src=&quot;https://raw.githubusercontent.com/3xp10it/pic/master/csapp7-1.png&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.text:已编译程序的机器码
-.rodata:只读数据,如printf语句中的格式串和开关语句的跳转表
-.data:已初始化的全局变量,局部变量保存在栈中
-.bss:未初始化的全局变量,在目标文件中这个节不占据实际的空间,它仅仅是一个点位符(better save space)
-.symtab:一个符号表,它存放程序中定义和引用的函数和全局变量的信息,.symtab符号表不包含局部变量的条目
-.rel.text:一个.text节中位置的列表,当链接器把这个目标文件和其他文件结合时,需要修改这些位置
-.rel.data:被模块引用或定义的任何全局变量的重定位信息
-.debug:一个调试符号表,其条目是程序中定义的局部变量和类型定义,程序中定义和引用的全局变量,以及原始的C源文件,只有-g
-选项调用编译驱动程序(gcc)才会得到这张表
-.line:源代码和.text节中机器指令之间的映射
-.strtab:一个字符串表,其内容包括.symtab和.debug节中的符号表,以及节头部中的节名字,也即反汇编中&quot;查找字符串&quot;的结果
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;3.符号:符号是函数名和变量名,本地链接器符号不包含对应于本地非静态程序变量的任何符号(局部变量)&lt;/p&gt;
-
-&lt;p&gt;4.定义为带有C static属性的本地过程变量是不在栈中管理的,相反,编译器在.data和.bss中为每个定义分配空间,并在符号表中
-创建一个有唯一名字的本地链接器符号&lt;/p&gt;
-
-&lt;p&gt;5.任何声明带有static属性的全局变量或者函数都是模块私有有,类似地,任何声明不带static属性的全局变量和函数都是公共的,
-可以被其他模块访问,使用static属性可在模块内部隐藏变量和函数声明,尽可能用static属性来保护你的变量和函数是很好的编
-程习惯.python中在名称前加下划线表示私有,&lt;a href=&quot;http://python.jobbole.com/81129/&quot;&gt;更多详情&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;6.重定位:在装入程序前,系统会计算未使用的内存,然后将程序装入,并记下开始地址,在执行有相对地址的指令时,会将所有的地
-址加上刚才记下的开始地址,就叫重定位.重定位就是把程序的逻辑地址空间变换成内存中的实际物理地址空间的过程,也就是说在
-装入时对目标程序中指令和数据的修改过程,它是多道程序在内存中同时运行的基础.链接过程中会把多个文件的相同类型数据段
-代码放在一起,所以需要将里面的符号变量重新安置在一个确定的内存地址中,这就是重定位.&lt;/p&gt;
-
-&lt;p&gt;7.对可重定位目标文件的理解,&lt;a href=&quot;http://blog.csdn.net/ky_heart/article/details/51865526&quot;&gt;更多详情&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;8.elf可执行文件格式图如下,.text,.rodata和.data节和可重定位目标文件中的节是相似的,除了这些节已经被重定位到它们最终
-的运行时存储器地址以外.elf可执行文件被设计得很容易加载到存储器,可执行文件的连续的片(chunk)被映射到连续的存储器段,
-段头部表描述了这种关系,如下图7-12展示了一个可执行文件的段头部表(由objdump显示),其中第一部分是代码段,包括(elf头部,
-段头部表,.init,.text,.rodata节),第二部分是数据段,包括(.data,.bss节)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/3xp10it/pic/master/csapp7-2.png&quot; /&gt;
-&lt;img src=&quot;https://raw.githubusercontent.com/3xp10it/pic/master/csapp7-3.png&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;9.任何unix程序都可以通过调用execve函数来调用加载器,加载器将可执行目标文件中的代码和数据从磁盘拷贝到存储器中,然后
-通过跳转到程序的第一条指令或入口点来运行该程序,加载器运行时,它创建如下图7-13所示的存储器映像,其中内核虚拟存储器为
-高地址&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/3xp10it/pic/master/csapp7-4.png&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;10.&lt;a href=&quot;http://blog.chinaunix.net/uid-24532607-id-3082314.html&quot;&gt;静态链接库和动态链接库的区别&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;11.C语言为什么要有main函数?&lt;a href=&quot;https://www.zhihu.com/question/28360770?sort=created&quot;&gt;a&lt;/a&gt;,&lt;a href=&quot;http://blog.csdn.net/xtydtc/article/details/53572455&quot;&gt;b&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;12.GOT:全局偏移量表(global offset table),在加载时,动态链接器会重定位(修改)GOT中的每个条目,使得它包含正确的绝对地址.
-每个引用全局数据的目标模块都有自己的GOT&lt;/p&gt;
-
-&lt;p&gt;13.PLT:过程链接表(Procedure Linkage Table),如果一个目标模块调用定义在共享库中的任何函数,那么它就有自己的GOT和PLT,
-GOT是.data节的一部分,PLT是.text节的一部分&lt;/p&gt;
-
-&lt;p&gt;14.&lt;a href=&quot;https://www.zhihu.com/question/21249496/answer/71226275&quot;&gt;理解GOT和PLt的关系和原理&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;15.链接可以在编译时由静态编译器来完成,也可以在加载时和运行时由动态链接器来完成.链接器的两个主要任务是符号解析和重
-定位,符号解析将目标文件中的每个全局符号都绑定到一个唯一的定义,而重定位确定每个符号的最终存储器地址,并修改对那些目
-标的引用.&lt;/p&gt;
-
-</description>
-        <pubDate>Fri, 08 Sep 2017 00:00:00 +0800</pubDate>
-        <link>http://3xp10it.cc/auxilary/2017/09/08/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%AC%AC7%E7%AB%A0%E7%AC%94%E8%AE%B0/</link>
-        <guid isPermaLink="true">http://localhost:4000/auxilary/2017/09/08/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%AC%AC7%E7%AB%A0%E7%AC%94%E8%AE%B0/</guid>
-        
-        <category>csapp</category>
-        
-        
-        <category>auxilary</category>
         
       </item>
     
