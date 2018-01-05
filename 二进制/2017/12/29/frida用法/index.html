@@ -265,11 +265,11 @@ else
             console.log("New args0-&gt; type:"+typeof args[0]+" value:"+args[0]")
           },
           onLeave: function(retval) {
-            console.log("Original retval-&gt; type:"+typeof args[0]+" value:"+args[0])
+            console.log("Original retval-&gt; type:"+typeof retval+" value:"+retval)
 
             newretval=ptr("xxxx")
             retval.replace(newretval)
-            console.log("New retval-&gt; type:"+typeof args[0]+" value:"+newretval)
+            console.log("New retval-&gt; type:"+typeof newretval+" value:"+newretval)
           }
         });
     }
