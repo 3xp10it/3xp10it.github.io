@@ -5,7 +5,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>实战ios破解--通过UI找关键函数</title>
+<title>ios应用逆向工程7-10章笔记</title>
 <meta name="description" content="A blog about programming and network security">
 
 <link rel="profile" href="https://gmpg.org/xfn/11" />
@@ -93,12 +93,12 @@
     <div itemscope itemtype="https://schema.org/Article" class="col-md-12 article">
       
 
-      <h1 class="header" itemprop="name">实战ios破解--通过UI找关键函数</h1>
+      <h1 class="header" itemprop="name">ios应用逆向工程7-10章笔记</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">January 16, 2018</span>
+          on <span itemprop="datePublished" content="2014-08-28">January 17, 2018</span>
            under 二进制
         </i></small>
       </div>
@@ -113,38 +113,17 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="0x0-about">0x0 About</h3>
+        <span itemprop="articleBody"><h3 id="实战篇">实战篇</h3>
 
-<p>本文记录破解一个cydia中收费deb软件过程,如下为一个截图,其中<code class="highlighter-rouge">权限</code>所在UI显示<code class="highlighter-rouge">未授权</code></p>
+<p>1.制作一个app的tweak一般是通过分析这个app的已经的函数的功能和加上自己想实现的一些功能,两者整合得到一个tweak,其中分析app已有的函数功能在制作整个tweak所花的时间上占比较大.一般通过找相关UI的类(controller),分析类中的函数功能,然后再hook相关函数,并在hook时加入自己想实现的功能.分析类中的函数时,一般是分析从View中看到的数据背后可能存在的函数,如分析邮件app时,View中有收件人,则可通过分析找出获取收件人邮箱地址的函数名,这样在写tweak时可人工调用这个函数来获取收件人的邮箱地址</p>
 
-<p><img src="https://raw.githubusercontent.com/3xp10it/pic/master/crack_deb.png" alt="权限截图" /></p>
+<p>2.”拿到所有邮件”可以分为2步:一是捕获”刷新完成”事件;二是读取收件箱.其中,”刷新完成”的响应函数一般是定义在protocol里的,在分析class-dump头文件的时候,要留意各种protocol里有没有出现<code class="highlighter-rouge">didRefresh</code>,<code class="highlighter-rouge">didUpdate</code>,<code class="highlighter-rouge">didReload</code>之类名字中含有完成时态动词的函数</p>
 
-<h3 id="0x1-通过ui找函数的2种方法">0x1 通过UI找函数的2种方法</h3>
+<p>3.理解Objective-C中的delegate,<a href="http://blog.csdn.net/jymn_chen/article/details/9058725">1st</a>,<a href="https://www.zhihu.com/question/19827157">2nd</a>.MVC模式中,V(view,也即UI)的delegate(助手,秘书)是C(controller).<code class="highlighter-rouge">[#0xUI_obj_address delegate]</code>可得到一个UI的被委托要实现的功能(function)</p>
 
-<ul>
-  <li>
-    <p>ios通过cydia安装<code class="highlighter-rouge">flex_injected</code>,并在要破解的软件中使用<code class="highlighter-rouge">flex_injected</code>
-这种方法很方便,效率很高,可通过点击app中的<code class="highlighter-rouge">flex_injected</code>功能区的<code class="highlighter-rouge">select</code>,再点击对应UI再点击<code class="highlighter-rouge">views</code>按钮,通过<code class="highlighter-rouge">views</code>中的不同颜色来直接定位对应UI和UI对应的类</p>
-  </li>
-  <li>
-    <p>通过cycript注入要破解的软件,然后通过<code class="highlighter-rouge">[#0x... setHidden:YES]</code>来找到UI后再找函数
-这种方法比上面的方法麻烦,需要通过<a href="https://www.jianshu.com/p/e802b8b76e92">这里</a>的命令来查找,一般是通过<code class="highlighter-rouge">[[UIApp keyWindow] recursiveDescription]</code>得到的结果逐个元素进行排除来得到目标UI对象.有以下2点注意事项</p>
-    <ul>
-      <li>cycript设置查看ui对应函数时用到的?expand命令失效时可以这样弥补<code class="highlighter-rouge">[[UIApp keyWindow] recursiveDescription].toString()</code></li>
-      <li>cycript查找ui对应的元素可通过找几个主要的大树枝,如果大树枝<code class="highlighter-rouge">[#0x... setHidden:YES]</code>后发现要找的UI不显示了则说明要找的UI在这个大树枝里面,然后再大树枝里通过<code class="highlighter-rouge">[#0x... setHidden:YES]</code>逐渐找到最终的小树枝.通过cycript找UI这条路一般不用,除非用flex_injected找不到(有些app无法使用flex_injected)</li>
-    </ul>
-  </li>
-</ul>
+<p>4.在使用theos编写tweak时,如果要调用class-dump出的头文件中的类中的函数,则需要在Tweak.xm的开关<code class="highlighter-rouge">#import 人工编写的头文件.h</code>,这个人工编写的头文件中的所有内容均摘自类对应的头文件,构造它的目的仅仅是通过编译,避免出现任何报错信息和警告</p>
 
-<h3 id="0x2-破解过程">0x2 破解过程</h3>
-
-<h4 id="step1-找到ui对应的元素">step1 找到ui对应的元素</h4>
-
-<p>本文要破解的app是cydia里安装的,可能有一些反破解机制,导致无法直接使用<code class="highlighter-rouge">ida</code>调试,也无法使用<code class="highlighter-rouge">flex_injected</code>分析ui,于是使用上面的第2种方法,也即通过<code class="highlighter-rouge">cycript</code>注入目标进程来通过排除法查找上图中<code class="highlighter-rouge">权限</code>这个ui对应的函数</p>
-
-<h4 id="step2-找到ui元素对应的函数">step2 找到ui元素对应的函数</h4>
-
-<h4 id="step3-ida分析函数">step3 ida分析函数</h4>
+<p>5.</p>
 
 </span>
 
@@ -155,7 +134,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            ios, UI, cycript
+            ios, reverse
           </small>
         </div>
         

@@ -5,7 +5,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>实战ios破解--通过UI找关键函数</title>
+<title>炒股观点</title>
 <meta name="description" content="A blog about programming and network security">
 
 <link rel="profile" href="https://gmpg.org/xfn/11" />
@@ -93,13 +93,13 @@
     <div itemscope itemtype="https://schema.org/Article" class="col-md-12 article">
       
 
-      <h1 class="header" itemprop="name">实战ios破解--通过UI找关键函数</h1>
+      <h1 class="header" itemprop="name">炒股观点</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">January 16, 2018</span>
-           under 二进制
+          on <span itemprop="datePublished" content="2014-08-28">January 18, 2018</span>
+           under 炒股
         </i></small>
       </div>
 
@@ -113,38 +113,14 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="0x0-about">0x0 About</h3>
-
-<p>本文记录破解一个cydia中收费deb软件过程,如下为一个截图,其中<code class="highlighter-rouge">权限</code>所在UI显示<code class="highlighter-rouge">未授权</code></p>
-
-<p><img src="https://raw.githubusercontent.com/3xp10it/pic/master/crack_deb.png" alt="权限截图" /></p>
-
-<h3 id="0x1-通过ui找函数的2种方法">0x1 通过UI找函数的2种方法</h3>
-
-<ul>
-  <li>
-    <p>ios通过cydia安装<code class="highlighter-rouge">flex_injected</code>,并在要破解的软件中使用<code class="highlighter-rouge">flex_injected</code>
-这种方法很方便,效率很高,可通过点击app中的<code class="highlighter-rouge">flex_injected</code>功能区的<code class="highlighter-rouge">select</code>,再点击对应UI再点击<code class="highlighter-rouge">views</code>按钮,通过<code class="highlighter-rouge">views</code>中的不同颜色来直接定位对应UI和UI对应的类</p>
-  </li>
-  <li>
-    <p>通过cycript注入要破解的软件,然后通过<code class="highlighter-rouge">[#0x... setHidden:YES]</code>来找到UI后再找函数
-这种方法比上面的方法麻烦,需要通过<a href="https://www.jianshu.com/p/e802b8b76e92">这里</a>的命令来查找,一般是通过<code class="highlighter-rouge">[[UIApp keyWindow] recursiveDescription]</code>得到的结果逐个元素进行排除来得到目标UI对象.有以下2点注意事项</p>
-    <ul>
-      <li>cycript设置查看ui对应函数时用到的?expand命令失效时可以这样弥补<code class="highlighter-rouge">[[UIApp keyWindow] recursiveDescription].toString()</code></li>
-      <li>cycript查找ui对应的元素可通过找几个主要的大树枝,如果大树枝<code class="highlighter-rouge">[#0x... setHidden:YES]</code>后发现要找的UI不显示了则说明要找的UI在这个大树枝里面,然后再大树枝里通过<code class="highlighter-rouge">[#0x... setHidden:YES]</code>逐渐找到最终的小树枝.通过cycript找UI这条路一般不用,除非用flex_injected找不到(有些app无法使用flex_injected)</li>
-    </ul>
-  </li>
+        <span itemprop="articleBody"><ul>
+  <li>买资讯中的股票,不可全买,小公司只有较少股票在短期(1-3天)内会有较小(1%-4%)上升.资讯可在”钠镁股票”或”平安证券”中找到.</li>
+  <li>分析各个股票找抄底股买</li>
+  <li>买最热股前几名(如2017年的最热的茅台)</li>
+  <li>买龙头企业在低价时的股票</li>
+  <li>买股份很低的大公司(如当前农业银行价格很低,3-4块每股)的股票</li>
+  <li>只买信心最大的股票</li>
 </ul>
-
-<h3 id="0x2-破解过程">0x2 破解过程</h3>
-
-<h4 id="step1-找到ui对应的元素">step1 找到ui对应的元素</h4>
-
-<p>本文要破解的app是cydia里安装的,可能有一些反破解机制,导致无法直接使用<code class="highlighter-rouge">ida</code>调试,也无法使用<code class="highlighter-rouge">flex_injected</code>分析ui,于是使用上面的第2种方法,也即通过<code class="highlighter-rouge">cycript</code>注入目标进程来通过排除法查找上图中<code class="highlighter-rouge">权限</code>这个ui对应的函数</p>
-
-<h4 id="step2-找到ui元素对应的函数">step2 找到ui元素对应的函数</h4>
-
-<h4 id="step3-ida分析函数">step3 ida分析函数</h4>
 
 </span>
 
@@ -155,7 +131,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            ios, UI, cycript
+            炒股
           </small>
         </div>
         
