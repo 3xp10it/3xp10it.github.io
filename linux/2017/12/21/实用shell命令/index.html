@@ -146,6 +146,7 @@
       <li>find命令查找文件名时会在终端中显示标准输出和标准错误的信息,也即<code class="highlighter-rouge">find ... == find ... 2&gt;&amp;1</code></li>
       <li>find命令遇到没有权限的文件会显示权限不足,显示权限不足的信息是标准错误</li>
       <li><code class="highlighter-rouge">2&gt;/dev/null</code>的功能是将标准错误重定向到/dev/null</li>
+      <li><code class="highlighter-rouge">python3 xx.py &gt; xx.log 2&gt;&amp;1</code>中<code class="highlighter-rouge">python3 xx.py &gt; xx.log</code>表示默认的”1”(标准输出)的内容重定向到xx.2&gt;&amp;1表示标准错误输出重定向到标准输出,但是由于标准输出已经有个规则(重定向到xx.log),所以有了2&gt;&amp;1的效果是标准错误也会重定向到xx.log如果一个任务运行时间比较久可这样运行:<code class="highlighter-rouge">setsid python3 xx.py &gt; xx.log 2&gt;&amp;1</code>这样表示在后台运行,且将运行中的标准输出与标准错误记录到xx.log,这样方便定位进度和异常</li>
     </ul>
   </li>
   <li><code class="highlighter-rouge">grep -v</code>中<code class="highlighter-rouge">-v</code>表示查找不匹配的</li>
@@ -155,19 +156,18 @@
 
 <p>1.查找当前目录下包括子目录内所有的包含’def’字符串的python文件,并删除这些文件</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>find . -name "*.py" | xargx ack -ri 'def' | xargs rm
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find . -name "*.py" | xargx ack -ri 'def' | xargs rm
 或者
 for file in $(find . -name "*.py");do ack -il 'def' $file &amp;&amp; rm $file;done
 或者
 for file in $(find . -name "*.py" | xargs ack -li 'def');do rm $file;done
 或者
 for file in $(find . -name "*.py");do ack -il 'def' $file;doen | xargs rm
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>2.查找当前目录下包括子目录内所有的临时文件(.swp,.swm,.swn,.swo等,但不包括.swf),并删除这些文件</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>macOS下:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>macOS下:
 
 find -E . -regex ".+\.sw[^f]$" 2&gt;/dev/null | xargs rm
 或
@@ -178,16 +178,14 @@ find -E . -regex ".+\.sw[^f]$" 2&gt;&amp;1 | grep -v "Permission denied" | xargs
 
 普通linux下:
 find . -regextype posix-extended -regex ".+\.sw[^f]$" | grep -v "Permission denied" | xargs rm
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>3.将godseyedb数据库中的targets表名中的所有可以匹配’.*scaned$’正则的列名所在的列的值全部修改为’0’</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>for colname in $(mysql -uroot -proot -e "select column_name from information_schema.columns where table_name='targets' and column_name regexp '.*scaned$'" | ack '\S+scaned$');do mysql -uroot -proot -e "use godseyedb;update targets set $colname='0'";done
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for colname in $(mysql -uroot -proot -e "select column_name from information_schema.columns where table_name='targets' and column_name regexp '.*scaned$'" | ack '\S+scaned$');do mysql -uroot -proot -e "use godseyedb;update targets set $colname='0'";done
 或者
 for colname in $(mysql -uroot -proot -e "use godseyedb;desc targets" | ack -o '\S+scaned(?=\s)');do mysql -uroot -proot -e "use godseyedb;update targets set $colname='0'";done
-</code></pre>
-</div>
+</code></pre></div></div>
 </span>
 
         
